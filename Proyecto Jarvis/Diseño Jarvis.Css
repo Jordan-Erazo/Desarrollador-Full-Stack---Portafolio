@@ -1,0 +1,143 @@
+body {
+    background-color: #0b1d28; /* El color azul oscuro de tu captura */
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    transition: background 0.5s ease; /* Permite que Jarvis cambie el fondo suavemente */
+}
+
+.contenedor-jarvis {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 100vw;
+	height: 100vh;
+	margin: 0;
+	gap: 24px;
+	background: transparent;
+}
+
+#btn-hablar {
+	width: 180px;
+	height: 180px;
+	border-radius: 50%;
+	border: none;
+	background: url('Imagenes/Imagen Jarvis.png') center/cover no-repeat, #0a222b;
+	box-shadow: 0 0 40px 10px rgba(0,255,255,0.18);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: #fff;
+	font-size: 48px;
+	cursor: pointer;
+	position: relative;
+	overflow: hidden;
+	transition: box-shadow 0.3s, background 0.3s;
+}
+#btn-hablar span {
+	position: relative;
+	z-index: 1;
+	font-size: 60px;
+	color: #fff;
+	filter: drop-shadow(0 0 8px #00fff7cc);
+}
+
+#btn-hablar::before {
+	content: "";
+	position: absolute;
+	top: -20px; left: -20px; right: -20px; bottom: -20px;
+	border-radius: 50%;
+	border: 2px solid rgba(0,255,255,0.18);
+	box-shadow: 0 0 60px 20px rgba(0,255,255,0.18);
+	opacity: 0.7;
+	z-index: 0;
+	animation: jarvis-glow 2.5s infinite alternate;
+	pointer-events: none;
+}
+
+#btn-hablar::after {
+	content: "";
+	position: absolute;
+	top: 50%; left: 50%;
+	width: 0; height: 0;
+	border-radius: 50%;
+	transform: translate(-50%, -50%);
+	box-shadow: 0 0 0 0 rgba(0,255,255,0.25);
+	opacity: 0.6;
+	z-index: 0;
+	animation: jarvis-wave 2.5s infinite cubic-bezier(0.4,0,0.2,1);
+	pointer-events: none;
+}
+
+@keyframes jarvis-glow {
+	0% { box-shadow: 0 0 60px 20px rgba(0,255,255,0.18); }
+	100% { box-shadow: 0 0 120px 40px rgba(0,255,255,0.35); }
+}
+
+@keyframes jarvis-wave {
+	0% {
+		width: 0;
+		height: 0;
+		opacity: 0.6;
+		box-shadow: 0 0 0 0 rgba(0,255,255,0.25);
+	}
+	70% {
+		width: 180px;
+		height: 180px;
+		opacity: 0.1;
+		box-shadow: 0 0 40px 40px rgba(0,255,255,0.10);
+	}
+	100% {
+		width: 0;
+		height: 0;
+		opacity: 0;
+		box-shadow: 0 0 0 0 rgba(0,255,255,0.0);
+	}
+}
+
+#texto-escuchado {
+	color: #fff;
+	font-size: 24px;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	text-shadow: 0 0 8px rgba(0,255,255,0.5);
+}
+
+@keyframes celula-vibrar {
+	0% { transform: scale(1) rotate(0deg);}
+	20% { transform: scale(1.05) rotate(-2deg);}
+	40% { transform: scale(0.98) rotate(2deg);}
+	60% { transform: scale(1.04) rotate(-1deg);}
+	80% { transform: scale(1.01) rotate(1deg);}
+	100% { transform: scale(1) rotate(0deg);}
+}
+
+#btn-hablar.escuchando {
+	animation: celula-vibrar 0.5s infinite;
+	border-color: #00fff7;
+	box-shadow: 0 0 80px 30px rgba(0,255,255,0.35), 0 0 0 12px rgba(0,255,255,0.18) inset;
+}
+
+#estado {
+	font-size: 18px;
+	color: #00d3ff;
+	text-shadow: 0 0 10px rgba(0, 211, 255, 0.6);
+	font-family: 'Courier New', monospace;
+	letter-spacing: 1px;
+	margin-top: 40px;
+	animation: parpadeo 1.5s infinite;
+}
+
+@keyframes parpadeo {
+	0%, 49% { opacity: 1; }
+	50%, 100% { opacity: 0.6; }
+}
+
+button, .tu-clase-del-boton {
+    transition: background-color 0.5s ease, box-shadow 0.5s ease;
+}
