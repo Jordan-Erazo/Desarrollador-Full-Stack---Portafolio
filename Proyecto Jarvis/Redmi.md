@@ -1,0 +1,49 @@
+# 🤖 Jarvis - Asistente Virtual por Voz Full Stack
+
+Bienvenido al repositorio de Jarvis. Este proyecto es un asistente virtual interactivo que opera bajo una arquitectura cliente-servidor, diseñado con un enfoque modular, diseño responsivo y lógica de procesamiento de lenguaje en el backend. 
+
+El sistema emula al asistente interactivo de ciencia ficción, integrando reconocimiento de voz continuo y síntesis de habla nativa.
+
+## 🚀 Arquitectura y Tecnologías Utilizadas
+
+### Frontend (Cliente)
+* **HTML5 & CSS3 Avanzado:** Maquetación limpia combinada con animaciones complejas (`@keyframes`) para simular pulsaciones de energía, parpadeos de terminal y vibraciones fluidas del reactor en estados de escucha activa.
+* **Web Speech API (SpeechRecognition):** Procesamiento nativo en el navegador para la captura y conversión de voz a texto de manera ininterrumpida.
+* **Web Speech API (SpeechSynthesis):** Motor de síntesis fonética configurado para emular una voz masculina premium ("Microsoft Pablo") con parámetros de velocidad personalizados.
+* **JavaScript Asíncrono (ES6+):** Gestión de eventos de audio, flujos asíncronos (`fetch`) para la comunicación con el servidor y manipulación dinámica del DOM.
+
+### Backend (Servidor)
+* **Node.js & Express:** Servidor HTTP configurado para recibir solicitudes asíncronas y servir los recursos de la aplicación.
+* **CORS Middleware:** Habilitado para permitir solicitudes de recursos cruzados de manera segura entre cliente y servidor.
+* **Motor de Contexto Dinámico:** Algoritmo en JavaScript que extrae variables del entorno local del servidor (horas, fechas, días de la semana locales) para estructurar respuestas inteligentes.
+
+## 🧠 ¿Cómo funciona? (Flujo Lógico del Sistema)
+
+1. **Activación de Permisos de Audio:** Debido a las políticas de seguridad de los navegadores modernos, el sistema implementa un disparador ("trigger") mediante un evento de click para desbloquear de forma segura el uso del micrófono y los canales de audio (`speechSynthesis`).
+2. **Escucha Activa de Palabra Clave ("Wake Word"):** El frontend procesa de forma continua los datos del micrófono. El sistema ignora los ruidos de fondo y solo se activa cuando detecta la palabra clave **"Jarvis"** mediante un filtro de expresiones regulares.
+3. **Petición API RESTful:** Una vez capturado el comando del usuario, se limpia el texto y se despacha una petición `POST` asíncrona hacia el endpoint `/api/hablar` en formato JSON.
+4. **Procesamiento de Lenguaje (Backend):** El servidor evalúa el comando entrante usando coincidencia de patrones. Dependiendo de si se solicita un saludo, datos del tiempo o cambios estéticos en la interfaz, el motor selecciona aleatoriamente de un banco de plantillas personalizadas para evitar respuestas monótonas.
+5. **Respuesta Auditiva y Visual:** El servidor retorna el paquete de datos, el frontend actualiza la interfaz de usuario en tiempo real para indicar el estado de respuesta y ejecuta la síntesis de voz. El sistema incluye un manejador automático (`onend`) que reactiva el micrófono de forma inmediata al terminar de hablar.
+
+## 🛠️ Características Destacadas de Código
+
+* **Persistencia en Escucha:** Implementación de temporizadores automatizados (`setTimeout`) en el evento `onend` del reconocimiento para mitigar desconexiones repentinas y garantizar que el asistente permanezca siempre atento.
+* **Inyección Dinámica de Estilos:** El cliente está preparado para recibir cadenas de código CSS directo desde las respuestas del backend (`data.estilosCSS`), permitiendo mutar el layout del navegador en tiempo real según el comando de voz ejecutado.
+* **Estructura de Datos Aleatorizada:** Uso eficiente de aritmética indexada (`Math.floor(Math.random() * array.length)`) sobre arreglos nativos para dotar al asistente de respuestas conversacionales más orgánicas.
+
+## 💻 Instalación y Ejecución Local
+
+Para correr este proyecto en tu entorno local, asegúrate de tener instalado [Node.js](https://nodejs.org/).
+
+1. Clona este repositorio dentro de tu espacio de trabajo:
+   ```bash
+   git clone [https://github.com/Jordan-Erazo/Desarrollador-Full-Stack---Portafolio.git](https://github.com/Jordan-Erazo/Desarrollador-Full-Stack---Portafolio.git)}
+
+2. Navega a la carpeta del proyecto:
+    cd "Proyecto Jarvis"
+
+3. Instala las dependencias necesarias:
+    npm install express cors
+
+4. Levanta el servidor local:
+    node app.js
