@@ -7,6 +7,7 @@ const estado = document.getElementById('estado');
 let reconocimiento = null;
 let corriendo = false;
 let autorizado = false;
+let retryCount = 0; // Contador para el back-off exponencial
 
 console.log("✨ JARVIS inicializando...");
 
@@ -19,11 +20,12 @@ function iniciar() {
     const SpeechRecognition = window.webkitSpeechRecognition || window.SpeechRecognition;
     reconocimiento = new SpeechRecognition();
     reconocimiento.lang = 'es-ES';
-    reconocimiento.continuous = true;
+    reconocimiento.continuous = false; // Cambiado a false para mayor estabilidad
     reconocimiento.interimResults = false;
 
     reconocimiento.onstart = () => {
         corriendo = true;
+        retryCount = 0; // Resetear contador al iniciar con éxito
         estado.textContent = "🎧 Escuchando (di 'Jarvis')...";
         boton.style.boxShadow = "0 0 40px 15px rgba(0,255,255,0.3)";
     };
@@ -36,7 +38,6 @@ function iniciar() {
             if (texto.includes('jarvis')) {
                 const comando = texto.replace(/jarvis/i, '').trim();
                 console.log("✅ Comando:", comando);
-                
                 if (comando) {
                     enviar(comando);
                 }
@@ -47,26 +48,49 @@ function iniciar() {
     reconocimiento.onerror = (event) => {
         console.error("❌ Error micrófono:", event.error);
         corriendo = false;
+
+        if (event.error === 'network') {
+            retryCount++;
+            const delay = Math.min(2000 * Math.pow(2, retryCount), 30000);
+            estado.textContent = `⚠️ Error de red. Reintentando en ${delay/1000}s...`;
+            console.warn(`⚠️ Red inestable. Reintento #${retryCount} en ${delay/1000}s...`);
+        } else if (event.error === 'not-allowed') {
+            estado.textContent = "❌ Permiso de micrófono denegado.";
+            autorizado = false;
+        } else {
+            estado.textContent = "⚠️ Error en el micrófono.";
+        }
     };
 
     reconocimiento.onend = () => {
-        console.log("🔄 Reconocimiento terminó, reiniciando automáticamente...");
         corriendo = false;
-        setTimeout(() => {
-            if (!corriendo && autorizado) {
-                intentarIniciar();
+        if (autorizado) {
+            // Si no estamos hablando (enviar() pone el modo "hablando"), reiniciamos
+            if (estado.textContent !== "🔊 Hablando...") {
+                const delay = retryCount > 0 ? Math.min(2000 * Math.pow(2, retryCount), 30000) : 1000;
+                setTimeout(() => {
+                    if (!corriendo && autorizado) {
+                        intentarIniciar();
+                    }
+                }, delay);
             }
-        }, 500);
+        }
     };
 }
 
 function intentarIniciar() {
-    if (reconocimiento && !corriendo && autorizado) {
+    if (autorizado) {
         try {
-            reconocimiento.start();
+            // Re-instanciar el objeto si hubo error de red para limpiar el estado interno del navegador
+            if (retryCount > 0) {
+                iniciar();
+            }
+            if (reconocimiento && !corriendo) {
+                reconocimiento.start();
+            }
         } catch (e) {
             console.error("No se pudo iniciar:", e.message);
-            setTimeout(() => intentarIniciar(), 1000);
+            setTimeout(() => intentarIniciar(), 2000);
         }
     }
 }
@@ -93,6 +117,7 @@ boton.addEventListener('click', () => {
             estado.textContent = "⏸️ Micrófono pausado";
             boton.style.boxShadow = "0 0 10px 5px rgba(255,100,100,0.3)";
         } else {
+            retryCount = 0; // Resetear contador al reiniciar manualmente
             intentarIniciar();
         }
     }
@@ -103,7 +128,7 @@ async function enviar(comando) {
     estado.textContent = "⏳ Jarvis procesando...";
 
     try {
-        const response = await fetch('http://localhost:3000/api/hablar', {
+        const response = await fetch('/api/hablar', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ texto: comando })

@@ -1,10 +1,16 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
+
+// Rutas para asegurar que siempre encuentre el archivo principal
+app.get(['/', '/2', '/2. Jarvis.html'], (req, res) => {
+    res.sendFile(path.join(__dirname, '2. Jarvis.html'));
+});
 
 app.get('/favicon.ico', (req, res) => res.sendStatus(204));
 
@@ -25,7 +31,7 @@ function generarRespuestaInteligente(texto) {
             `Presente, ${contexto.nombre_usuario}. Esperando sus órdenes.`,
             `Buenas, ${contexto.nombre_usuario}. Mis sistemas están completamente operacionales. ¿Cómo puedo ayudarle?`
         ];
-        return saludos[Math.floor(Math.random() * saludos.length)];
+        return { voz: saludos[Math.floor(Math.random() * saludos.length)], estilosCSS: null };
     }
 
     if (textoLimpio.match(/hora|qué hora|me dices la hora|decime la hora/)) {
@@ -35,7 +41,7 @@ function generarRespuestaInteligente(texto) {
             `Según mis sistemas, son exactamente las ${contexto.hora}.`,
             `Marcando ${contexto.hora} en punto, ${contexto.nombre_usuario}.`
         ];
-        return respuestas[Math.floor(Math.random() * respuestas.length)];
+        return { voz: respuestas[Math.floor(Math.random() * respuestas.length)], estilosCSS: null };
     }
 
     if (textoLimpio.match(/fecha|qué día|qué fecha|hoy es/)) {
@@ -45,23 +51,23 @@ function generarRespuestaInteligente(texto) {
             `Estamos en ${contexto.fecha}, un hermoso ${contexto.dia}.`,
             `Mis registros indican que es ${contexto.fecha}.`
         ];
-        return respuestas[Math.floor(Math.random() * respuestas.length)];
+        return { voz: respuestas[Math.floor(Math.random() * respuestas.length)], estilosCSS: null };
     }
 
     if (textoLimpio.match(/rojo|cambiar.*rojo|color rojo/)) {
-        return "Cambiando a tonos rojos, " + contexto.nombre_usuario + ".";
+        return { voz: "Cambiando a tonos rojos, " + contexto.nombre_usuario + ".", estilosCSS: "body { background-color: #4a0e0e !important; }" };
     }
-    
+
     if (textoLimpio.match(/azul|cambiar.*azul|color azul/)) {
-        return "Restaurando paleta azul estándar, " + contexto.nombre_usuario + ".";
+        return { voz: "Restaurando paleta azul estándar, " + contexto.nombre_usuario + ".", estilosCSS: "body { background-color: #0b1d28 !important; }" };
     }
-    
+
     if (textoLimpio.match(/verde|cambiar.*verde|color verde/)) {
-        return "Activando tonos verdes, " + contexto.nombre_usuario + ".";
+        return { voz: "Activando tonos verdes, " + contexto.nombre_usuario + ".", estilosCSS: "body { background-color: #0e2a1a !important; }" };
     }
 
     if (textoLimpio.match(/qué puedes|qué haces|tus capacidades|ayuda|qué sabes/)) {
-        return `Puedo: darle la hora, la fecha, cambiar colores del interfaz, mantener conversaciones inteligentes y mucho más, ${contexto.nombre_usuario}. Pruebe diciendo "Jarvis, hora" o "Jarvis, cambiar a verde".`;
+        return { voz: `Puedo: darle la hora, la fecha, cambiar colores del interfaz, mantener conversaciones inteligentes y mucho más, ${contexto.nombre_usuario}. Pruebe diciendo "Jarvis, hora" o "Jarvis, cambiar a verde".`, estilosCSS: null };
     }
 
     if (textoLimpio.match(/quién eres|quién soy|tu nombre|cómo te llamas/)) {
@@ -70,7 +76,7 @@ function generarRespuestaInteligente(texto) {
             `Mi nombre es Jarvis. Sistema de asistencia inteligente a su disposición.`,
             `Jarvis, ${contexto.nombre_usuario}. Creado para servirle con eficiencia.`
         ];
-        return respuestas[Math.floor(Math.random() * respuestas.length)];
+        return { voz: respuestas[Math.floor(Math.random() * respuestas.length)], estilosCSS: null };
     }
 
     if (textoLimpio.match(/gracias|muchas gracias|agradezco/)) {
@@ -79,7 +85,7 @@ function generarRespuestaInteligente(texto) {
             `Es un honor asistirle, ${contexto.nombre_usuario}.`,
             `Siempre disponible para usted, ${contexto.nombre_usuario}.`
         ];
-        return respuestas[Math.floor(Math.random() * respuestas.length)];
+        return { voz: respuestas[Math.floor(Math.random() * respuestas.length)], estilosCSS: null };
     }
 
     const respuestasGenericas = [
@@ -89,7 +95,7 @@ function generarRespuestaInteligente(texto) {
         `${contexto.nombre_usuario}, he registrado su solicitud. ¿Necesita algo adicional?`,
         `Muy bien. He procesado su comando. ¿Qué más puedo hacer por usted?`
     ];
-    return respuestasGenericas[Math.floor(Math.random() * respuestasGenericas.length)];
+    return { voz: respuestasGenericas[Math.floor(Math.random() * respuestasGenericas.length)], estilosCSS: null };
 }
 
 app.post('/api/hablar', async (req, res) => {
@@ -105,12 +111,11 @@ app.post('/api/hablar', async (req, res) => {
 
     try {
         const respuesta = generarRespuestaInteligente(texto);
-        console.log(`✅ Jarvis dice: ${respuesta}`);
+        console.log(`✅ Jarvis dice: ${respuesta.voz}`);
 
         return res.json({
             OK: true,
-            voz: respuesta,
-            estilosCSS: null
+            ...respuesta
         });
     } catch (error) {
         console.error("❌ Error:", error.message);
