@@ -8,21 +8,16 @@ app.use(express.static(__dirname));
 
 app.get('/favicon.ico', (req, res) => res.sendStatus(204));
 
-// 🧠 Generador inteligente de respuestas para Jarvis
 function generarRespuestaInteligente(texto) {
     const textoLimpio = texto.toLowerCase().trim();
     
-    // Contexto y variables para respuestas dinámicas
     const contexto = {
         nombre_usuario: "señor",
         hora: new Date().toLocaleTimeString('es-ES'),
         fecha: new Date().toLocaleDateString('es-ES'),
         dia: new Date().toLocaleDateString('es-ES', { weekday: 'long' })
     };
-
-    // Plantillas de respuesta inteligentes según tipos de entrada
     
-    // 1️⃣ SALUDOS
     if (textoLimpio.match(/hola|buenos|saludos|qué tal/)) {
         const saludos = [
             `Buenas, ${contexto.nombre_usuario}. Jarvis a su servicio. ¿En qué puedo asistirle?`,
@@ -33,7 +28,6 @@ function generarRespuestaInteligente(texto) {
         return saludos[Math.floor(Math.random() * saludos.length)];
     }
 
-    // 2️⃣ INFORMACIÓN DE TIEMPO
     if (textoLimpio.match(/hora|qué hora|me dices la hora|decime la hora/)) {
         const respuestas = [
             `Son las ${contexto.hora}, ${contexto.nombre_usuario}.`,
@@ -44,7 +38,6 @@ function generarRespuestaInteligente(texto) {
         return respuestas[Math.floor(Math.random() * respuestas.length)];
     }
 
-    // 3️⃣ INFORMACIÓN DE FECHA
     if (textoLimpio.match(/fecha|qué día|qué fecha|hoy es/)) {
         const respuestas = [
             `Hoy es ${contexto.dia}, ${contexto.fecha}, ${contexto.nombre_usuario}.`,
@@ -55,7 +48,6 @@ function generarRespuestaInteligente(texto) {
         return respuestas[Math.floor(Math.random() * respuestas.length)];
     }
 
-    // 4️⃣ CAMBIO DE COLORES
     if (textoLimpio.match(/rojo|cambiar.*rojo|color rojo/)) {
         return "Cambiando a tonos rojos, " + contexto.nombre_usuario + ".";
     }
@@ -68,12 +60,10 @@ function generarRespuestaInteligente(texto) {
         return "Activando tonos verdes, " + contexto.nombre_usuario + ".";
     }
 
-    // 5️⃣ PREGUNTAS SOBRE CAPACIDADES
     if (textoLimpio.match(/qué puedes|qué haces|tus capacidades|ayuda|qué sabes/)) {
         return `Puedo: darle la hora, la fecha, cambiar colores del interfaz, mantener conversaciones inteligentes y mucho más, ${contexto.nombre_usuario}. Pruebe diciendo "Jarvis, hora" o "Jarvis, cambiar a verde".`;
     }
 
-    // 6️⃣ PREGUNTAS PERSONALES SOBRE JARVIS
     if (textoLimpio.match(/quién eres|quién soy|tu nombre|cómo te llamas/)) {
         const respuestas = [
             `Soy Jarvis, el asistente de inteligencia artificial avanzada. Un placer, ${contexto.nombre_usuario}.`,
@@ -83,7 +73,6 @@ function generarRespuestaInteligente(texto) {
         return respuestas[Math.floor(Math.random() * respuestas.length)];
     }
 
-    // 7️⃣ AGRADECIMIENTO
     if (textoLimpio.match(/gracias|muchas gracias|agradezco/)) {
         const respuestas = [
             `De nada, ${contexto.nombre_usuario}. Estoy para servir.`,
@@ -93,7 +82,6 @@ function generarRespuestaInteligente(texto) {
         return respuestas[Math.floor(Math.random() * respuestas.length)];
     }
 
-    // 8️⃣ RESPUESTA GENÉRICA INTELIGENTE
     const respuestasGenericas = [
         `Interesante observación, ${contexto.nombre_usuario}. Tomaré nota de ello.`,
         `He anotado: "${texto}". ¿Hay algo más en lo que pueda ayudarle?`,

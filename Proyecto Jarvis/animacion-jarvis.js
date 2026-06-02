@@ -10,7 +10,6 @@ let autorizado = false;
 
 console.log("✨ JARVIS inicializando...");
 
-// Verificar soporte
 if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
     estado.textContent = "❌ Navegador no soporta micrófono. Usa Chrome o Edge.";
     boton.disabled = true;
@@ -72,19 +71,15 @@ function intentarIniciar() {
     }
 }
 
-// Autorizar audio con click (requerido por Chrome)
 boton.addEventListener('click', () => {
     if (!autorizado) {
         autorizado = true;
         estado.textContent = "✅ Micrófono siempre activo - di 'Jarvis'";
         boton.style.boxShadow = "0 0 40px 15px rgba(0,255,255,0.3)";
-        
-        // Reproducir audio silencioso para despertar permisos (en contexto de click)
+
         const dummy = new SpeechSynthesisUtterance(" ");
         dummy.volume = 0;
         window.speechSynthesis.speak(dummy);
-        
-        // Iniciar micrófono después
         setTimeout(() => {
             if (!reconocimiento) {
                 iniciar();
@@ -92,7 +87,6 @@ boton.addEventListener('click', () => {
             intentarIniciar();
         }, 300);
     } else {
-        // Toggle pausar/reanudar
         if (corriendo) {
             reconocimiento.stop();
             corriendo = false;
@@ -129,7 +123,6 @@ async function enviar(comando) {
             window.speechSynthesis.cancel();
             window.speechSynthesis.speak(dummy);
 
-            // Luego reproducir la respuesta real con un pequeño delay
             setTimeout(() => {
                 const utterance = new SpeechSynthesisUtterance(data.voz);
                 utterance.lang = 'es-ES';
@@ -137,7 +130,6 @@ async function enviar(comando) {
                 utterance.pitch = 1.0;
                 utterance.volume = 1;
 
-                // Buscar voz de Microsoft Pablo
                 const voces = window.speechSynthesis.getVoices();
                 const vozPablo = voces.find(v => v.name.includes('Pablo') || v.name.includes('pablo'));
                 if (vozPablo) {
@@ -178,7 +170,6 @@ async function enviar(comando) {
                 window.speechSynthesis.speak(utterance);
             }, 100);
 
-            // Aplicar estilos
             if (data.estilosCSS) {
                 let estiloElement = document.getElementById('estilos-jarvis');
                 if (!estiloElement) {
@@ -198,7 +189,6 @@ async function enviar(comando) {
     }
 }
 
-// Iniciar cuando carga
 window.addEventListener('load', () => {
     console.log("🚀 Sistema JARVIS listo");
     estado.textContent = "Click en 🎤 para autorizar y activar micrófono";
